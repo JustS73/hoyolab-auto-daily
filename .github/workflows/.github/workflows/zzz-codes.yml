@@ -1,0 +1,35 @@
+name: ZZZ codes
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'   # каждые 6 часов
+  workflow_dispatch:
+
+permissions:
+  contents: write            # чтобы сохранить список уже активированных кодов
+
+jobs:
+  redeem:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Redeem codes
+        run: node zzz-redeem.mjs
+        env:
+          ZZZ_COOKIE: ${{ secrets.ZZZ_COOKIE }}
+          ZZZ_UID: ${{ secrets.ZZZ_UID }}
+          ZZZ_REGION: ${{ vars.ZZZ_REGION }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+      - name: Save state
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@users.noreply.github.com
+          git add redeemed-zzz.json
+          git diff --cached --quiet || (git commit -m "zzz: redeemed codes" && git push)
