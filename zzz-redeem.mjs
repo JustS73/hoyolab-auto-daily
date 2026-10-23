@@ -81,7 +81,7 @@ for (const code of codes) {
   console.log(code, res.retcode, res.message)
 
   if (res.retcode === -1071 || res.retcode === -100) {
-    report.push('❌ Куки протухли — обнови cookie_token_v2 в ZZZ_COOKIE')
+    report.push(`❌ ${code}: ${res.retcode} ${res.message} — похоже, протухли куки, обнови ZZZ_COOKIE`)
     break
   }
   if (label) {
